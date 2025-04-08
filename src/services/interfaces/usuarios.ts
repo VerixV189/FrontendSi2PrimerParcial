@@ -1,8 +1,8 @@
 export interface DatoGeneral{
     id: number,
     nombre: string,
-    updatedAt: string,
-    createdAt: string
+    fecha_creacion: string,
+    fecha_actualizacion: string
 }
 
 export type Permiso = DatoGeneral;

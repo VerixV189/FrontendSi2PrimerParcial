@@ -1,4 +1,4 @@
-// components/tables/TableMarca.tsx
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,89 +8,48 @@ import {
 } from "../../components/ui/table";
 import Pagination from "../Tables/PaginacionT";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
-
-interface Marca {
-  id: number;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-const marcasData: Marca[] = [
-  {
-    id: 1,
-    name: "Samsung",
-    createdAt: "2024-01-05",
-    updatedAt: "2024-03-01",
-  },
-  {
-    id: 2,
-    name: "Apple",
-    createdAt: "2024-01-15",
-    updatedAt: "2024-03-12",
-  },
-  {
-    id: 3,
-    name: "Sony",
-    createdAt: "2024-02-01",
-    updatedAt: "2024-03-20",
-  },
-];
+import { getPaginatedMarca } from "../../services/Gestion_de_Productos/marcaService"; // Ajusta si tu ruta cambia
+import { Marca } from "../../services/interfaces/marca";
 
 const TableMarca = () => {
+  const [marcas, setMarcas] = useState<Marca[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    const fetchMarcas = async () => {
+      try {
+        const data = await getPaginatedMarca(currentPage);
+        setMarcas(data.items);
+        setTotalPages(data.meta.total_pages);
+      } catch (error) {
+        console.error("Error al obtener marcas paginadas", error);
+      }
+    };
+
+    fetchMarcas();
+  }, [currentPage]);
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <Table>
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                ID
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Nombre
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Fecha creación
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Última actualización
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-              >
-                Acciones
-              </TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500 dark:text-gray-400">ID</TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500 dark:text-gray-400">Nombre</TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500 dark:text-gray-400">Fecha creación</TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500 dark:text-gray-400">Última actualización</TableCell>
+              <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500 dark:text-gray-400">Acciones</TableCell>
             </TableRow>
           </TableHeader>
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {marcasData.map((marca) => (
+            {marcas.map((marca) => (
               <TableRow key={marca.id}>
-                <TableCell className="px-5 py-4 sm:px-6 text-start text-theme-sm text-gray-800 dark:text-white/90">
-                  {marca.id}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-800 dark:text-white">
-                  {marca.name}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                  {marca.createdAt}
-                </TableCell>
-                <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">
-                  {marca.updatedAt}
-                </TableCell>
+                <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-800 dark:text-white/90">{marca.id}</TableCell>
+                <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-800 dark:text-white">{marca.nombre}</TableCell>
+                <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">{marca.fecha_creacion}</TableCell>
+                <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">{marca.fecha_actualizacion}</TableCell>
                 <TableCell className="px-4 py-3 text-start">
                   <div className="flex items-center space-x-3">
                     <button className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400">
@@ -107,7 +66,11 @@ const TableMarca = () => {
         </Table>
       </div>
       <div className="p-4">
-        <Pagination totalPages={3} currentPage={1} />
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );
