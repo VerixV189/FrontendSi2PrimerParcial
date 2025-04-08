@@ -1,7 +1,8 @@
 
 import { AuthResponse, Error } from "./interfaces/usuarios";
 
-const API_URL: string = "http://localhost:3000/api/auth";
+const API_URL: string = "http://127.0.0.1:8000/api/auth";
+
 const TOKEN: string = "token";
 
 
@@ -24,9 +25,8 @@ const handleErrorResponse = async (response: Response) => {
   const data = await response.json();
   if (!response.ok) {
     throw {
-      mensaje: data.mensaje || "Error en la solicitud",
-      codigo: data.errorCode || "Código Desconocido",
-      errores: data.errores,
+      message: data.mensaje || "Error en la solicitud",
+      error: data.errorCode || "Código Desconocido",
       fecha: data.fecha || new Date().toISOString(),
     } as Error;
   }
@@ -53,7 +53,7 @@ export const login = async (email: string, password: string): Promise<AuthRespon
     return {
       user: data.usuario,
       token: data.token,
-      mensaje: data.mensaje
+      message: data.message
     } as AuthResponse;
 
   } catch (error) {
@@ -63,14 +63,15 @@ export const login = async (email: string, password: string): Promise<AuthRespon
 };
 
 // Función de signup
-export const signup = async (name: string, email: string, password: string): Promise<AuthResponse> => {
+export const signup = async (nombre: string, email: string, password: string): Promise<AuthResponse> => {
   try {
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_URL}/registrar`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre: name, email, password }),
+      body: JSON.stringify({nombre, email, password }),
     });
     const data = await handleErrorResponse(response);
+    //solamente retorna el usuario
     return {
       user: data.usuario
     } as AuthResponse;
@@ -87,14 +88,14 @@ export const checkAuth = async (): Promise<AuthResponse> => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${getStoredToken()}`,
+        "Authorization": `Bearer ${getStoredToken()}`,
         //credentials: "include" //permite enviar y recibir cookies
       },
     });
     const data = await handleErrorResponse(response);
     console.log(` checkAuth ${JSON.stringify(data)}`)
     return {
-      user: data
+      user: data.usuario
     } as AuthResponse;
   } catch (error) {
     console.error("Error en checkAuth:", error);

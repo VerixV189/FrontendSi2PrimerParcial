@@ -18,16 +18,14 @@ export interface Usuario extends DatoGeneral{
 }
 
 export interface Error {
-  mensaje: string;
-  codigo: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  errores: any | null; // Puede ser `null` o contener información detallada
+  message: string;
+  error: number;
   fecha: string;
 }
 
 // Tipo para el retorno de los servicios de login y signup
 export interface AuthResponse {
   user: Usuario; // Puedes especificar un tipo más detallado según la respuesta
-  mensaje?: string;
+  message?: string;
   token?: string;
 }

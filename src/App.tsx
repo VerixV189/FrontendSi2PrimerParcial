@@ -20,7 +20,9 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import PublicLayout from "./pages/WelcomePage/PublicLayout";
 import Welcome from "./pages/WelcomePage/Welcome";
-
+import { BitacoraUsuario } from "./pages/AuthPages/BitacoraUsuario";
+import { RolPermisoPage } from "./pages/AuthPages/RolPermisoPage";
+// import { AuthProvider } from "./context/AuthContext.tsx";
 
 
 export default function App() {
@@ -34,32 +36,37 @@ export default function App() {
               <Route index path="/" element={<Welcome />} />
             </Route>
             {/* Dashboard Layout */}
-            <Route element={<AppLayout />}>
-              <Route index path="/home" element={<Home />} />
+            {/* <AuthProvider> */}
+              <Route element={<AppLayout />}>
+              
+                    <Route index path="/home" element={<Home />} />
 
-              {/* Others Page */}
-              <Route path="/profile" element={<UserProfiles />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/blank" element={<Blank />} />
+                    {/* Others Page */}
+                    <Route path="/profile" element={<UserProfiles />} />
+                    <Route path="/bitacora-usuario" element={<BitacoraUsuario />} />
+                    <Route path="/rol-permiso" element={<RolPermisoPage />} />
+                    <Route path="/calendar" element={<Calendar />} />
+                    <Route path="/blank" element={<Blank />} />
 
-              {/* Forms */}
-              <Route path="/form-elements" element={<FormElements />} />
+                    {/* Forms */}
+                    <Route path="/form-elements" element={<FormElements />} />
 
-              {/* Tables */}
-              <Route path="/basic-tables" element={<BasicTables />} />
+                    {/* Tables */}
+                    <Route path="/basic-tables" element={<BasicTables />} />
 
-              {/* Ui Elements */}
-              <Route path="/alerts" element={<Alerts />} />
-              <Route path="/avatars" element={<Avatars />} />
-              <Route path="/badge" element={<Badges />} />
-              <Route path="/buttons" element={<Buttons />} />
-              <Route path="/images" element={<Images />} />
-              <Route path="/videos" element={<Videos />} />
+                    {/* Ui Elements */}
+                    <Route path="/alerts" element={<Alerts />} />
+                    <Route path="/avatars" element={<Avatars />} />
+                    <Route path="/badge" element={<Badges />} />
+                    <Route path="/buttons" element={<Buttons />} />
+                    <Route path="/images" element={<Images />} />
+                    <Route path="/videos" element={<Videos />} />
 
-              {/* Charts */}
-              <Route path="/line-chart" element={<LineChart />} />
-              <Route path="/bar-chart" element={<BarChart />} />
-            </Route>
+                    {/* Charts */}
+                    <Route path="/line-chart" element={<LineChart />} />
+                    <Route path="/bar-chart" element={<BarChart />} />
+              </Route>
+            {/* </AuthProvider> */}
 
             {/* Auth Layout */}
             <Route path="/signin" element={<SignIn />} />

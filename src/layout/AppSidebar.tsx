@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router";
 // Assume these icons are imported from an icon library
 import {
   BoxCubeIcon,
-  CalenderIcon,
+  // CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
@@ -28,7 +28,7 @@ type NavItem = {
   name: string;
   icon: React.ReactNode;
   path?: string;
-  subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
+  subItems?: { icon?: React.ReactNode ,name: string; path: string; pro?: boolean; new?: boolean }[];
   roles?: string[];
 };
 
@@ -38,24 +38,29 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-    roles: ["ADMIN"]
+    //roles: ["ADMINISTRADOR"]
   },
-  {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
-    roles: ["ADMIN"]
-  },
-  {
+    {
+      //icono
     icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/profile",
+    name: "Gestion de Usuario",
+    subItems: [
+      { 
+        name: "Perfil de usuario",
+         path: "/profile",
+          pro: false },
+      { name: "Bitacora de usuario", path: "/bitacora-usuario", pro: false },
+      { name: "Badge", path: "/badge", pro: false },
+      { name: "Buttons", path: "/buttons", pro: false },
+      { name: "Images", path: "/images", pro: false },
+      { name: "Videos", path: "/videos", pro: false },
+    ],
   },
-  {
-    icon: <UserCircleIcon />,
-    name: "Perfil de usuario",
-    path: "/profile",
-  },
+  // {
+  //   icon: <UserCircleIcon />,
+  //   name: "Perfil de usuario",
+  //   path: "/profile",
+  // },
   {
     name: "Forms",
     icon: <ListIcon />,
@@ -65,7 +70,7 @@ const navItems: NavItem[] = [
     name: "Tables",
     icon: <TableIcon />,
     subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-    roles:["USUARIO"]
+    //roles:["USUARIO"]
   },
   {
     name: "Pages",
@@ -411,7 +416,8 @@ const othersItems: NavItem[] = [
                   <HorizontaLDots className="size-6" />
                 )}
               </h2>
-              {renderMenuItems(filteredNavItems, "main")}
+              {/* {renderMenuItems(filteredNavItems, "main")} */}
+              {renderMenuItems(navItems,"main")}
             </div>
             <div className="">
               <h2
