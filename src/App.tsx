@@ -22,6 +22,9 @@ import PublicLayout from "./pages/WelcomePage/PublicLayout";
 import Welcome from "./pages/WelcomePage/Welcome";
 import { BitacoraUsuario } from "./pages/AuthPages/BitacoraUsuario";
 import { RolPermisoPage } from "./pages/AuthPages/RolPermisoPage";
+import { MarcaPage } from "./pages/AuthPages/MarcaPage";
+import { CategoriaPage } from "./pages/AuthPages/CategoriaPage";
+import { ModeloPage } from "./pages/AuthPages/ModeloPage";
 // import { AuthProvider } from "./context/AuthContext.tsx";
 
 
@@ -44,7 +47,11 @@ export default function App() {
                     {/* Others Page */}
                     <Route path="/profile" element={<UserProfiles />} />
                     <Route path="/bitacora-usuario" element={<BitacoraUsuario />} />
-                    <Route path="/rol-permiso" element={<RolPermisoPage />} />
+                    <Route path="/roles-permisos" element={<RolPermisoPage />} />
+                    <Route path="/marcas" element={<MarcaPage />} />
+                    <Route path="/categorias" element={<CategoriaPage />} />
+                    <Route path="/modelos" element={<ModeloPage />} />
+
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/blank" element={<Blank />} />
 

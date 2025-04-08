@@ -1,12 +1,13 @@
-// components/Tables/PaginacionT.tsx
-import React from "react";
 import Button from "../../components/ui/button/Button";
+
+// components/Tables/PaginacionT.tsx
 interface PaginationProps {
   totalPages: number;
   currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage }) => {
+const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage, onPageChange }) => {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
@@ -15,6 +16,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage }) => {
         size="sm"
         variant="outline"
         disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
       >
         Previous
       </Button>
@@ -31,6 +33,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage }) => {
               size="sm"
               variant={page === currentPage ? "primary" : "outline"}
               className="w-8 h-8 px-0 py-0 text-sm rounded-md"
+              onClick={() => onPageChange(page)}
             >
               {page}
             </Button>
@@ -42,11 +45,13 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages, currentPage }) => {
         size="sm"
         variant="outline"
         disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
       >
         Next
       </Button>
     </div>
   );
 };
+
 
 export default Pagination;

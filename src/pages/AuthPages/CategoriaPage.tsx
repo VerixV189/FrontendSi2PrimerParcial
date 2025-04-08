@@ -1,9 +1,11 @@
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
-import BitacoraTable from "./TableBitacora";
+import Button from "../../components/ui/button/Button";
+import ComponentCardModified from "./ComponentCardModified";
+import TableCategoria from "./TableCategoria";
 
-export const BitacoraUsuario = () => {
+
+export const CategoriaPage = () => {
   return (
     <>
 
@@ -13,15 +15,21 @@ export const BitacoraUsuario = () => {
         description="Esta es la pagina de bitacora de usuario"
       />
       {/* esto es donde dinde Basic Tables o un header  */}
-      <PageBreadcrumb pageTitle="Bitacora" />
+      <PageBreadcrumb pageTitle="Categoria" />
       <div className="space-y-6">
         {/* lo envuelve la tabla en un card */}
-        <ComponentCard title="Tabla de Sesiones">
+        <ComponentCardModified title="Tabla de Categorias"
+            action={
+              <Button onClick={() => console.log("Nueva Categoria")}>
+                + Agregar
+              </Button>
+            }
+        >
           
           {/* crea la tabla ya con todos los datos */}
           
-          <BitacoraTable/>
-        </ComponentCard>
+          <TableCategoria/>
+        </ComponentCardModified>
         
       </div>
     </>

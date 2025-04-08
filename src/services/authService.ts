@@ -1,9 +1,9 @@
 
 import { AuthResponse, Error } from "./interfaces/usuarios";
 
-const API_URL: string = "http://127.0.0.1:8000/api/auth";
+export const API_URL: string = "http://127.0.0.1:8000/api";
 
-const TOKEN: string = "token";
+export const TOKEN: string = "token";
 
 
 export const storeToken = (token: string) => {
@@ -21,7 +21,7 @@ export const revokeToken = () => {
 // Definir una interfaz para el error personalizado
 
 // Función genérica para manejar errores
-const handleErrorResponse = async (response: Response) => {
+export const handleErrorResponse = async (response: Response) => {
   const data = await response.json();
   if (!response.ok) {
     throw {
@@ -31,7 +31,7 @@ const handleErrorResponse = async (response: Response) => {
     } as Error;
   }
   console.log(`estoy en el servicio stringfy ${JSON.stringify(data)}`);
-  console.log(`data usuario ${data.email}, data mensaje ${data.nombre}`);
+  //console.log(`data usuario ${data.email}, data mensaje ${data.nombre}`);
   console.log(data);
   return data;
 };
@@ -41,7 +41,7 @@ const handleErrorResponse = async (response: Response) => {
 // Función de login
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
   try {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -65,7 +65,7 @@ export const login = async (email: string, password: string): Promise<AuthRespon
 // Función de signup
 export const signup = async (nombre: string, email: string, password: string): Promise<AuthResponse> => {
   try {
-    const response = await fetch(`${API_URL}/registrar`, {
+    const response = await fetch(`${API_URL}/auth/registrar`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({nombre, email, password }),
@@ -84,7 +84,7 @@ export const signup = async (nombre: string, email: string, password: string): P
 // Función para verificar autenticación
 export const checkAuth = async (): Promise<AuthResponse> => {
   try {
-    const response = await fetch(`${API_URL}/me`, {
+    const response = await fetch(`${API_URL}/auth/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

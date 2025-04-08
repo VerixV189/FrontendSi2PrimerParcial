@@ -4,31 +4,34 @@ interface Option {
   value: string;
   label: string;
 }
-
 interface SelectProps {
   options: Option[];
   placeholder?: string;
   onChange: (value: string) => void;
   className?: string;
   defaultValue?: string;
-  
+  value?: string; // <-- agrega esta línea
 }
 
-const Select: React.FC<SelectProps> = ({
+const SelectModified: React.FC<SelectProps> = ({
   options,
   placeholder = "Select an option",
   onChange,
   className = "",
   defaultValue = "",
-  
+  value,
 }) => {
-  // Manage the selected value
-  const [selectedValue, setSelectedValue] = useState<string>(defaultValue);
+  const [internalValue, setInternalValue] = useState<string>(defaultValue);
+
+  const isControlled = value !== undefined;
+  const selectedValue = isControlled ? value : internalValue;
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setSelectedValue(value);
-    onChange(value); // Trigger parent handler
+    const newValue = e.target.value;
+    if (!isControlled) {
+      setInternalValue(newValue); // solo si no es controlado
+    }
+    onChange(newValue);
   };
 
   return (
@@ -41,7 +44,6 @@ const Select: React.FC<SelectProps> = ({
       value={selectedValue}
       onChange={handleChange}
     >
-      {/* Placeholder option */}
       <option
         value=""
         disabled
@@ -49,7 +51,6 @@ const Select: React.FC<SelectProps> = ({
       >
         {placeholder}
       </option>
-      {/* Map over options */}
       {options.map((option) => (
         <option
           key={option.value}
@@ -62,5 +63,4 @@ const Select: React.FC<SelectProps> = ({
     </select>
   );
 };
-
-export default Select;
+export default SelectModified;

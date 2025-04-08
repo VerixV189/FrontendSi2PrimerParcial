@@ -50,10 +50,7 @@ const navItems: NavItem[] = [
          path: "/profile",
           pro: false },
       { name: "Bitacora de usuario", path: "/bitacora-usuario", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
+      { name: "Roles y Permisos", path: "/roles-permisos", pro: false },
     ],
   },
   // {
@@ -61,6 +58,20 @@ const navItems: NavItem[] = [
   //   name: "Perfil de usuario",
   //   path: "/profile",
   // },
+
+  {
+      //icono
+    icon: <ListIcon />,
+    name: "Gestion de Productos",
+    subItems: [
+      { 
+        name: "Marcas",
+         path: "/marcas",
+          pro: false },
+      { name: "Categorias", path: "/categorias", pro: false },
+      { name: "Modelos", path: "/modelos", pro: false },
+    ],
+  },
   {
     name: "Forms",
     icon: <ListIcon />,

@@ -13,8 +13,9 @@ export interface Rol extends DatoGeneral{
 
 export interface Usuario extends DatoGeneral{
     email:string,
-    roId: number,
-    rol?: Rol
+    rol_id: number,
+    username?:string,
+    rol?: Rol,
 }
 
 export interface Error {
@@ -28,4 +29,8 @@ export interface AuthResponse {
   user: Usuario; // Puedes especificar un tipo más detallado según la respuesta
   message?: string;
   token?: string;
+}
+
+export interface ResponseDefault{
+  message?: string
 }

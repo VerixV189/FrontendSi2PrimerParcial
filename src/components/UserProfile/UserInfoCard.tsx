@@ -1,16 +1,73 @@
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { updateUserProfile } from "../../services/Gestion_de_usuario/usuarioService";
+import SelectModified from "../../pages/AuthPages/SelectModified";
+import { Rol } from "../../services/interfaces/usuarios";
+import { getListRoles } from "../../services/Gestion_de_usuario/rolService";
+
 
 export default function UserInfoCard() {
   const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("AuthContext not found");
+  const { user, setUser } = context;
+
+  const [form, setForm] = useState({
+    nombre: "",
+    username: "",
+    email: "",
+    rol_id: 0, // en vez de ""
+  });
+
+  const [roles, setRoles] = useState<Rol[]>([]);
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const data = await getListRoles();
+        setRoles(data);
+      } catch (error) {
+        console.error("Error al obtener roles", error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        nombre: user.nombre || "",
+        username: user.username || "",
+        email: user.email || "",
+        rol_id: user.rol_id || 0,
+      });
+    }
+  }, [user, isOpen]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  const handleRoleChange = (value: string) => {
+    setForm({ ...form, rol_id: parseInt(value) });
+  };
+  // para salvar los datos del usuario
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault(); // <--- evita que recargue la página
+    try {
+      const updatedUser = await updateUserProfile(form);
+      setUser(updatedUser.user);
+      closeModal();
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -24,9 +81,8 @@ export default function UserInfoCard() {
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Nombre
               </p>
-              {/* aqui deberia cuadrar con el nombre */}
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Fernando Padilkla
+                {user?.nombre ?? "-"}
               </p>
             </div>
 
@@ -34,9 +90,8 @@ export default function UserInfoCard() {
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Username
               </p>
-              {/* aqui deberia cuadrar con el username */}
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Fercho1
+                {user?.username ?? "-"}
               </p>
             </div>
 
@@ -44,9 +99,8 @@ export default function UserInfoCard() {
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Email
               </p>
-              {/* aqui deberia cuadrar con el email */}
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                fernando@gmail.com
+                {user?.email ?? "-"}
               </p>
             </div>
 
@@ -54,9 +108,8 @@ export default function UserInfoCard() {
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
                 Rol
               </p>
-              {/* aqui deberia ir su rol */}
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                Administrador
+                {user?.rol?.nombre ?? "-"}
               </p>
             </div>
           </div>
@@ -84,7 +137,7 @@ export default function UserInfoCard() {
           Edit
         </button>
       </div>
-      
+
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
@@ -105,29 +158,34 @@ export default function UserInfoCard() {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nombre</Label>
-                    {/* aqui deberia cuadrar con el nombre */}
-                    <Input type="text" value="Fernando" />
+                    <Input type="text" name="nombre" value={form.nombre} onChange={handleChange} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Username</Label>
-                    {/* aqui el username */}
-                    <Input type="text" value="fercho" />
+                    <Input type="text" name="username" value={form.username} onChange={handleChange} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Email</Label>
-                    <Input type="text" value="fernando@gmail.com" />
+                    <Input type="text" name="email" value={form.email} onChange={handleChange} />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Rol</Label>
-                    {/* bueno si es admin deberia poder cambiar al rol que sea */}
-                    {/* pero si es usuario normal no */}
-                    {/* ademas de que para cambiar se deberia tener la especie de combox donde seleccione el rol mas facil */}
-                    <Input type="text" value="Team Manager" />
+                    <SelectModified
+                      options={roles.map((rol) => ({
+                        value: rol.id.toString(),
+                        label: rol.nombre,
+                      }))}
+                      placeholder="Selecciona un rol"
+                      value={form.rol_id.toString()}
+                      onChange={handleRoleChange}
+                      className="dark:bg-dark-900"
+                    />
+                    
+                    
                   </div>
-
                 </div>
               </div>
             </div>
