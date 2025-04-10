@@ -8,11 +8,12 @@ import {
 } from "../../components/ui/table";
 import Pagination from "../Tables/PaginacionT";
 import { PencilSquareIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
-import { deleteRol, getPaginatedRoles } from "../../services/Gestion_de_usuario/rolService"; // importa tu servicio
+import { deleteRol, getPaginatedRoles, updateRol } from "../../services/Gestion_de_usuario/rolService"; // importa tu servicio
 import { Rol } from "../../services/interfaces/usuarios";
 import { Modal } from "../../components/ui/modal";
 import Swal from "sweetalert2";
 import Button from "../../components/ui/button/Button";
+import Input from "../../components/form/input/InputField";
 
 
 
@@ -27,6 +28,16 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // para el edit
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [rolEditNombre, setRolEditNombre] = useState("");
+  const [rolToEdit, setRolToEdit] = useState<Rol | null>(null);
+  const openEditModal = (rol: Rol) => {
+    setRolToEdit(rol);
+    setRolEditNombre(rol.nombre); // precargar el input con el nombre actual
+    setShowEditModal(true);
+  };
+
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedRol, setSelectedRol] = useState<Rol | null>(null);
@@ -37,6 +48,36 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
     setShowDeleteModal(true);
   };
 
+  //handle para el edit del modal
+  const handleEdit = async () => {
+  if (!rolToEdit) return;
+
+    try {
+      const data = await updateRol(rolToEdit.id, rolEditNombre);
+      Swal.fire({
+        title: "Rol actualizado",
+        text: data.message,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setShowEditModal(false);
+      setRolToEdit(null);
+      setRolEditNombre("");
+
+      const updatedData = await getPaginatedRoles(currentPage);
+      setRoles(updatedData.items);
+      setTotalPages(updatedData.meta.total_pages);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: error.error || "Error",
+        text: error.message || "No se pudo actualizar el rol",
+      });
+    }
+  };
+
   //se dispara despues de presionar el eliminar
   const handleDelete = async () => {
     if (!selectedRol) return;
@@ -44,11 +85,27 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
     try {
       console.log(selectedRol.id)
       const data = await deleteRol(selectedRol.id);
-      Swal.fire("Rol eliminado", data.message, "success");
+      Swal.fire({title:"Rol eliminado",
+                 text:data.message, 
+                 icon:"success",
+                 timer:2000,
+                 showConfirmButton: false,
+                });
       setShowDeleteModal(false);
       setSelectedRol(null);
+      const updatedData = await getPaginatedRoles(currentPage);
+
+      // 🧠 Si la página actual se quedó sin elementos y no estás en la primera página, retrocede
+      if (updatedData.items.length === 0 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        // Si hay más elementos o estás en la primera, solo actualiza
+        setRoles(updatedData.items);
+        setTotalPages(updatedData.meta.total_pages);
+      }
+
+      
       onDeleted?.();
-      //Refresca la tabla si deseas (esto puede ser una prop o estado local)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error:any) {
       Swal.fire({
@@ -100,7 +157,9 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
                 <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">{role.fecha_actualizacion}</TableCell>
                 <TableCell className="px-4 py-3 text-start">
                   <div className="flex items-center space-x-3">
-                    <button className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400">
+                    <button className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"
+                     onClick={() => openEditModal(role)}
+                     >
                       <PencilSquareIcon className="h-5 w-5" />
                     </button>
                     <button className="text-gray-500 hover:text-green-600 dark:hover:text-green-400">
@@ -121,6 +180,7 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
         <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
       </div>
     </div>
+    {/* modal de eliminacion */}
       <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} className="max-w-[400px] m-4">
         <div className="w-full p-6 bg-white rounded-3xl dark:bg-gray-900">
           <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
@@ -137,6 +197,26 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
           </div>
         </div>
       </Modal>
+      {/* modal de edicion */}
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} className="max-w-[400px] m-4">
+        <div className="w-full p-6 bg-white rounded-3xl dark:bg-gray-900">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
+            Editar Rol
+          </h2>
+          <Input
+            type="text"
+            className="w-full p-2 border rounded"
+            value={rolEditNombre}
+            onChange={(e) => setRolEditNombre(e.target.value)}
+          />
+          <div className="flex justify-end gap-3 pt-6">
+            <Button size="sm" onClick={handleEdit}>
+              Guardar Cambios
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
   </>
 
   );

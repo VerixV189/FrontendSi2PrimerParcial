@@ -47,3 +47,20 @@ export const deletePermiso = async (id: number): Promise<ResponseDefault> => {
     message: data.message,
   };
 };
+
+export const updatePermiso = async (id: number, nombre: string): Promise<ResponseDefault> => {
+  const response = await fetch(`${API_URL}/permisos/${id}/update`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getStoredToken()}`
+    },
+    body: JSON.stringify({ nombre })
+  });
+
+  const data = await handleErrorResponse(response);
+  return {
+    message: data.message,
+    permiso:data.permiso
+  };
+};

@@ -1,4 +1,6 @@
 import { Meta } from "./Bitacora";
+import { Categoria } from "./categoria";
+import { Marca } from "./marca";
 
 export interface DatoGeneral{
     id: number,
@@ -37,6 +39,10 @@ export interface ResponseDefault{
   message?: string,
   rol?: Rol
   permiso?: Permiso,
+  marca?:Marca,
+  categoria?:Categoria,
+  marcas?:Marca[],
+  categorias?:Categoria[]
 }
 
 export interface UsuarioPaginado{
