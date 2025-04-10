@@ -2,7 +2,7 @@
 
 
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
-import { AuthResponse, ResponseDefault } from "../interfaces/usuarios";
+import { AuthResponse, ResponseDefault, UsuarioPaginado } from "../interfaces/usuarios";
 
 
 export const updateUserProfile = async (data: {
@@ -65,4 +65,17 @@ export const cambiarFotoPerfil = async (file: File) => {
 
   const data = await handleErrorResponse(response);
   return data.foto_url; // o lo que el backend te devuelva
+};
+
+
+export const getPaginatedListUsers = async (page:number = 1):Promise<UsuarioPaginado> => {
+  
+  const response = await fetch(`${API_URL}/usuarios/list-paginate?page=${page}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${getStoredToken()}`,
+      // 'Content-Type' NO se especifica, fetch lo hace automáticamente para FormData
+    },
+  });
+  return await handleErrorResponse(response);
 };

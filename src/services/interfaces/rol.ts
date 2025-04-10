@@ -5,3 +5,4 @@ export interface RolPaginado {
   items: Rol[];
   meta: Meta;
 }
+

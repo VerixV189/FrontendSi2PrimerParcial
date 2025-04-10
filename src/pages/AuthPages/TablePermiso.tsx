@@ -8,11 +8,13 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import Pagination from "../Tables/PaginacionT";
-import { PencilSquareIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { getPaginatedPermisos } from "../../services/Gestion_de_usuario/permisoService";
 import { Permiso } from "../../services/interfaces/usuarios";
-
-const TablePermiso = () => {
+interface TablePermisoProps {
+  reloadTrigger?: boolean;
+}
+const TablePermiso = ({reloadTrigger}:TablePermisoProps) => {
   const [permisos, setPermisos] = useState<Permiso[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -30,7 +32,7 @@ const TablePermiso = () => {
     };
 
     fetchPermisos();
-  }, [currentPage]);
+  }, [currentPage,reloadTrigger]);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -57,9 +59,7 @@ const TablePermiso = () => {
                     <button className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400">
                       <PencilSquareIcon className="h-5 w-5" />
                     </button>
-                    <button className="text-gray-500 hover:text-green-600 dark:hover:text-green-400">
-                      <UserPlusIcon className="h-5 w-5" />
-                    </button>
+                    
                     <button className="text-gray-500 hover:text-red-600 dark:hover:text-red-400">
                       <TrashIcon className="h-5 w-5" />
                     </button>

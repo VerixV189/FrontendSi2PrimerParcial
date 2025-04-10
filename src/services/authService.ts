@@ -25,8 +25,8 @@ export const handleErrorResponse = async (response: Response) => {
   const data = await response.json();
   if (!response.ok) {
     throw {
-      message: data.mensaje || "Error en la solicitud",
-      error: data.errorCode || "Código Desconocido",
+      message: data.message || "Error en la solicitud",
+      error: data.error || "Código Desconocido",
       fecha: data.fecha || new Date().toISOString(),
     } as Error;
   }

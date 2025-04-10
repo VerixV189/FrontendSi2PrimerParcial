@@ -4,10 +4,30 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
+import { signup } from "../../services/authService";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [form, setForm] = useState({
+    nombre: "",
+    email: "",
+    password: "",
+  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e:React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const {nombre,email,password} =form
+      const data = await signup(nombre,email,password)
+      console.log(`data creada: ${data}`)
+    } catch (error) {
+      console.log(`ocurrio un error inesperado: `,error)
+    }
+  }
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
       <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
@@ -82,35 +102,22 @@ export default function SignUpForm() {
                 </span>
               </div>
             </div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="space-y-5">
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                
                   {/* <!-- First Name --> */}
-                  <div className="sm:col-span-1">
+                  
                     <Label>
                       Nombre<span className="text-error-500">*</span>
                     </Label>
                     <Input
                       type="text"
-                      id="fname"
-                      name="fname"
+                      id="nombre"
+                      name="nombre"
                       placeholder="Ingresa tu nombre"
+                      value={form.nombre}
+                      onChange={handleChange}
                     />
-                  </div>
-                  {/* <!-- Last Name --> */}
-                  <div className="sm:col-span-1">
-                    <Label>
-                      Apellido<span className="text-error-500">*</span>
-                    </Label>
-                    <Input
-                      type="text"
-                      id="lname"
-                      name="lname"
-                      placeholder="Ingresa tu apellido"
-                    />
-                  </div>
-                </div>
-                {/* <!-- Email --> */}
                 <div>
                   <Label>
                     Email<span className="text-error-500">*</span>
@@ -120,6 +127,8 @@ export default function SignUpForm() {
                     id="email"
                     name="email"
                     placeholder="Ingresa tu email"
+                    value={form.email}
+                    onChange={handleChange}
                   />
                 </div>
                 {/* <!-- Password --> */}
@@ -131,6 +140,9 @@ export default function SignUpForm() {
                     <Input
                       placeholder="Ingresa tu Contraseña"
                       type={showPassword ? "text" : "password"}
+                      value={form.password}
+                      onChange={handleChange}
+                      name="password"
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -164,7 +176,7 @@ export default function SignUpForm() {
                 </div>
                 {/* <!-- Button --> */}
                 <div>
-                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600" type="submit">
                     Registrate
                   </button>
                 </div>

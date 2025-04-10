@@ -1,8 +1,10 @@
+import { Meta } from "./Bitacora";
+
 export interface DatoGeneral{
     id: number,
     nombre: string,
-    fecha_creacion: string,
-    fecha_actualizacion: string
+    fecha_creacion?: string,
+    fecha_actualizacion?: string
 }
 
 export type Permiso = DatoGeneral;
@@ -32,5 +34,12 @@ export interface AuthResponse {
 }
 
 export interface ResponseDefault{
-  message?: string
+  message?: string,
+  rol?: Rol
+  permiso?: Permiso,
+}
+
+export interface UsuarioPaginado{
+  items:Usuario[],
+  meta:Meta
 }

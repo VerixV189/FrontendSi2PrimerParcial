@@ -25,6 +25,7 @@ import { RolPermisoPage } from "./pages/AuthPages/RolPermisoPage";
 import { MarcaPage } from "./pages/AuthPages/MarcaPage";
 import { CategoriaPage } from "./pages/AuthPages/CategoriaPage";
 import { ModeloPage } from "./pages/AuthPages/ModeloPage";
+import { UsuarioPage } from "./pages/AuthPages/UsuariosPage";
 // import { AuthProvider } from "./context/AuthContext.tsx";
 
 
@@ -51,6 +52,7 @@ export default function App() {
                     <Route path="/marcas" element={<MarcaPage />} />
                     <Route path="/categorias" element={<CategoriaPage />} />
                     <Route path="/modelos" element={<ModeloPage />} />
+                    <Route path="/usuarios" element={<UsuarioPage />} />
 
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/blank" element={<Blank />} />

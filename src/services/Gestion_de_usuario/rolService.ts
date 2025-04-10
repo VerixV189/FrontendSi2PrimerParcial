@@ -1,6 +1,6 @@
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
 import { RolPaginado } from "../interfaces/rol";
-import { Rol } from "../interfaces/usuarios";
+import { ResponseDefault, Rol } from "../interfaces/usuarios";
 
 
 
@@ -32,4 +32,36 @@ export const getPaginatedRoles = async (page:number =1):Promise<RolPaginado> => 
     }
   );
   return await handleErrorResponse(response);
+}
+
+
+export const createRol = async (nombre: string): Promise<ResponseDefault> =>{
+  console.log(`estoy entrando al metodo de crear roles`);
+  const response = await fetch(`${API_URL}/rol/create`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getStoredToken()}`,
+    },
+    body: JSON.stringify({ nombre }),
+  });
+  const data = await handleErrorResponse(response)
+  return {
+    message:data.message,
+    rol: data.rol
+  }
+};
+
+
+export const deleteRol = async (id:number):Promise<ResponseDefault> => {
+  const response = await fetch(`${API_URL}/rol/${id}/delete`,{
+    method: "DELETE",
+    headers:{
+      Authorization:`Bearer ${getStoredToken()}`
+    }
+  })
+  const data = await handleErrorResponse(response)
+  return {
+    message: data.message
+  }
 }

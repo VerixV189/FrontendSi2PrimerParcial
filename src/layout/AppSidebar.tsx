@@ -51,6 +51,7 @@ const navItems: NavItem[] = [
           pro: false },
       { name: "Bitacora de usuario", path: "/bitacora-usuario", pro: false },
       { name: "Roles y Permisos", path: "/roles-permisos", pro: false },
+      { name: "Usuarios", path: "/usuarios", pro: false },
     ],
   },
   // {

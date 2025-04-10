@@ -7,14 +7,61 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import Pagination from "../Tables/PaginacionT";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { getPaginatedRoles } from "../../services/Gestion_de_usuario/rolService"; // importa tu servicio
+import { PencilSquareIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { deleteRol, getPaginatedRoles } from "../../services/Gestion_de_usuario/rolService"; // importa tu servicio
 import { Rol } from "../../services/interfaces/usuarios";
+import { Modal } from "../../components/ui/modal";
+import Swal from "sweetalert2";
+import Button from "../../components/ui/button/Button";
 
-const TableRol = () => {
+
+
+
+interface TableRolProps {
+  reloadTrigger?: boolean;
+  onDeleted?: () => void;
+}
+
+const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
   const [roles, setRoles] = useState<Rol[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedRol, setSelectedRol] = useState<Rol | null>(null);
+
+  //abrir el modal de eliminacion
+  const openDeleteModal = (rol: Rol) => {
+    setSelectedRol(rol);
+    setShowDeleteModal(true);
+  };
+
+  //se dispara despues de presionar el eliminar
+  const handleDelete = async () => {
+    if (!selectedRol) return;
+
+    try {
+      console.log(selectedRol.id)
+      const data = await deleteRol(selectedRol.id);
+      Swal.fire("Rol eliminado", data.message, "success");
+      setShowDeleteModal(false);
+      setSelectedRol(null);
+      onDeleted?.();
+      //Refresca la tabla si deseas (esto puede ser una prop o estado local)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error:any) {
+      Swal.fire({
+      icon: "error",
+      title: error.error || "Error",
+      text: error.message || "No se pudo eliminar el rol",
+    });
+    }
+  };
+
+  // Dentro del componente:
+
+
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -28,9 +75,10 @@ const TableRol = () => {
     };
 
     fetchRoles();
-  }, [currentPage]);
+  }, [currentPage,reloadTrigger]);
 
   return (
+    <>
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <Table>
@@ -55,7 +103,11 @@ const TableRol = () => {
                     <button className="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400">
                       <PencilSquareIcon className="h-5 w-5" />
                     </button>
-                    <button className="text-gray-500 hover:text-red-600 dark:hover:text-red-400">
+                    <button className="text-gray-500 hover:text-green-600 dark:hover:text-green-400">
+                      <UserPlusIcon className="h-5 w-5" />
+                    </button>
+                    <button className="text-gray-500 hover:text-red-600 dark:hover:text-red-400"
+                    onClick={() => openDeleteModal(role)}>
                       <TrashIcon className="h-5 w-5" />
                     </button>
                   </div>
@@ -69,7 +121,26 @@ const TableRol = () => {
         <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
       </div>
     </div>
+      <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} className="max-w-[400px] m-4">
+        <div className="w-full p-6 bg-white rounded-3xl dark:bg-gray-900">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
+            Confirmar eliminación
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            ¿Estás seguro de que deseas eliminar el rol{" "}
+            <span className="font-bold">{selectedRol?.nombre}</span>?
+          </p>
+          <div className="flex justify-end gap-3 pt-6">
+            <Button size="sm" onClick={handleDelete}>
+              Eliminar
+            </Button>
+          </div>
+        </div>
+      </Modal>
+  </>
+
   );
+  
 };
 
 export default TableRol;
