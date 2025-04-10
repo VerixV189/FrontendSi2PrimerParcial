@@ -1,5 +1,5 @@
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
-import { CategoriaPaginado } from "../interfaces/categoria";
+import { Categoria, CategoriaPaginado } from "../interfaces/categoria";
 import { ResponseDefault } from "../interfaces/usuarios";
 
 
@@ -69,7 +69,7 @@ export const createCategoria = async (nombre: string): Promise<ResponseDefault> 
 
 
 
-export const getAllCategoria = async (): Promise<ResponseDefault> => {
+export const getAllCategoria = async (): Promise<Categoria[]> => {
   const response = await fetch(`${API_URL}/categorias/list`, {
     method: "GET",
     headers: {
@@ -77,5 +77,5 @@ export const getAllCategoria = async (): Promise<ResponseDefault> => {
     },
   });
   const data = await handleErrorResponse(response);
-  return { categorias: data.categorias };
+  return data;
 };

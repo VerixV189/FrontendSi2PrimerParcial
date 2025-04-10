@@ -13,3 +13,13 @@ export interface ModeloPaginado{
     items:Modelo[],
     meta:Meta
 }
+
+
+
+export interface ModeloRequest {
+  nombre?: string;
+  marca_id: number;
+  categoria_id: number;
+  stock_total?: number;
+  id?:number//referencia al id del Modelo
+}

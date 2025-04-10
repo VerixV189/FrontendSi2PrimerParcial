@@ -8,7 +8,7 @@ import {
 } from "../../components/ui/table";
 import Pagination from "../Tables/PaginacionT";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { getPaginatedModelos, updateModelo, deleteModelo } from "../../services/Gestion_de_Productos/modeloService";
+import { getPaginatedModelos, deleteModelo, updateModelo } from "../../services/Gestion_de_Productos/modeloService";
 import { Modelo } from "../../services/interfaces/modelo";
 import Swal from "sweetalert2";
 import { Modal } from "../../components/ui/modal";
@@ -16,6 +16,10 @@ import Button from "../../components/ui/button/Button";
 import SelectModified from "./SelectModified";
 import { getAllMarca } from "../../services/Gestion_de_Productos/marcaService";
 import { getAllCategoria } from "../../services/Gestion_de_Productos/categoriaService";
+import { Marca } from "../../services/interfaces/marca";
+import { Categoria } from "../../services/interfaces/categoria";
+import Label from "../../components/form/Label";
+import Input from "../../components/form/input/InputField";
 
 
 interface TableModeloProps {
@@ -33,6 +37,7 @@ const TableModelo = ({ reloadTrigger, onDeleted }: TableModeloProps) => {
   const [selectedModelo, setSelectedModelo] = useState<Modelo | null>(null);
   const [modeloEditMarcaId, setModeloEditMarcaId] = useState<string>("");
   const [modeloEditCategoriaId, setModeloEditCategoriaId] = useState<string>("");
+  const [modeloEditNombre, setModeloEditNombre] = useState<string>("");
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
 
@@ -59,6 +64,7 @@ const TableModelo = ({ reloadTrigger, onDeleted }: TableModeloProps) => {
   // Función para abrir el modal de edición y cargar datos
 const openEditModal = async (modelo: Modelo) => {
   setSelectedModelo(modelo);
+  setModeloEditNombre(modelo.nombre)
   setModeloEditMarcaId(modelo.marca?.id?.toString() ?? "");
   setModeloEditCategoriaId(modelo.categoria?.id?.toString() ?? "");
   setShowEditModal(true);
@@ -97,24 +103,40 @@ const openEditModal = async (modelo: Modelo) => {
       Swal.fire("Error", error.message || "No se pudo eliminar el modelo", "error");
     }
   };
+ 
 
   const handleEdit = async () => {
-  if (!selectedModelo) return;
+    if (!selectedModelo) return;
+
     try {
-      const data = await updateModelo(selectedModelo.id, {
+      const payload = {
+        id: selectedModelo.id,
+        nombre: modeloEditNombre, // no se edita, pero se requiere por backend
         marca_id: Number(modeloEditMarcaId),
         categoria_id: Number(modeloEditCategoriaId),
-      });
+        stock_total: selectedModelo.stock_total, // si lo manejas también
+      };
 
-      Swal.fire("Modelo actualizado", data.message, "success");
+      const response = await updateModelo(payload);
+
+      Swal.fire("Modelo actualizado", response.message, "success");
+
       setShowEditModal(false);
       setSelectedModelo(null);
+      setModeloEditMarcaId("");
+        setModeloEditNombre(""); // Limpias también
+      setModeloEditCategoriaId("");
       fetchModelos();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       Swal.fire("Error", error.message || "No se pudo actualizar el modelo", "error");
     }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setModeloEditNombre(e.target.value);
+  };
+
   return (
     <>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -182,36 +204,48 @@ const openEditModal = async (modelo: Modelo) => {
           </h2>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Marca</label>
-              <SelectModified
-                options={marcas.map((marca) => ({
-                  value: marca.id.toString(),
-                  label: marca.nombre,
-                }))}
-                value={modeloEditMarcaId}
-                onChange={(val) => setModeloEditMarcaId(val)}
-                placeholder="Selecciona una marca"
-              />
-            </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col">
+                  <Label>Marca</Label>
+                  <SelectModified
+                    options={marcas.map((marca) => ({
+                      value: marca.id.toString(),
+                      label: marca.nombre,
+                    }))}
+                    value={modeloEditMarcaId}
+                    onChange={(val) => setModeloEditMarcaId(val)}
+                    placeholder="Selecciona una marca"
+                  />
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoría</label>
-              <SelectModified
-                options={categorias.map((cat) => ({
-                  value: cat.id.toString(),
-                  label: cat.nombre,
-                }))}
-                value={modeloEditCategoriaId}
-                onChange={(val) => setModeloEditCategoriaId(val)}
-                placeholder="Selecciona una categoría"
-              />
-            </div>
+                <div className="flex flex-col">
+                  <Label>Categoría</Label>
+                  <SelectModified
+                    options={categorias.map((cat) => ({
+                      value: cat.id.toString(),
+                      label: cat.nombre,
+                    }))}
+                    value={modeloEditCategoriaId}
+                    onChange={(val) => setModeloEditCategoriaId(val)}
+                    placeholder="Selecciona una categoría"
+                  />
+                </div>
+
+                <div className="col-span-2 flex flex-col">
+                  <Label>Nombre del modelo</Label>
+                  <Input
+                    type="text"
+                    id="nombre"
+                    name="nombre"
+                    placeholder="Ej: Macbook Air M2 128GB"
+                    value={modeloEditNombre}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button size="sm" variant="outline" onClick={() => setShowEditModal(false)}>
-                Cancelar
-              </Button>
               <Button size="sm" onClick={handleEdit}>
                 Guardar Cambios
               </Button>

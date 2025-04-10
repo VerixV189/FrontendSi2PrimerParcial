@@ -1,7 +1,7 @@
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
 import { MarcaPaginado } from "../interfaces/marca";
 import { ResponseDefault } from "../interfaces/usuarios";
-
+import { Marca } from "../interfaces/marca";
 
 export const getPaginatedMarca = async (page:number =1):Promise<MarcaPaginado> => {
   const response = await fetch(
@@ -61,7 +61,7 @@ export const createMarca = async (nombre: string): Promise<ResponseDefault> => {
 };
 
 
-export const getAllMarca = async (): Promise<ResponseDefault> => {
+export const getAllMarca = async (): Promise<Marca[]> => {
   const response = await fetch(`${API_URL}/marcas/list`, {
     method: "GET",
     headers: {
@@ -69,5 +69,5 @@ export const getAllMarca = async (): Promise<ResponseDefault> => {
     },
   });
   const data = await handleErrorResponse(response);
-  return { marcas: data.marcas};
+  return data;
 };
