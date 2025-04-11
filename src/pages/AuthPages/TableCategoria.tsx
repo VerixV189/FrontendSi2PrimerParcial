@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import { Modal } from "../../components/ui/modal";
 import Button from "../../components/ui/button/Button";
 import Input from "../../components/form/input/InputField";
+import Label from "../../components/form/Label";
 
 interface TableCategoriaProps {
   reloadTrigger?: boolean;
@@ -64,9 +65,13 @@ const TableCategoria = ({ reloadTrigger, onDeleted }: TableCategoriaProps) => {
 
     try {
       const data = await updateCategoria(selectedCategoria.id, categoriaEditNombre);
-      Swal.fire("Categoría actualizada", data.message, "success");
-      setShowEditModal(false);
-      fetchCategorias();
+      Swal.fire({
+              title: "Categoria actualizada",
+              text: data.message,
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       Swal.fire("Error", error.message || "No se pudo actualizar la categoría", "error");
@@ -141,6 +146,7 @@ const TableCategoria = ({ reloadTrigger, onDeleted }: TableCategoriaProps) => {
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} className="max-w-[400px] m-4">
         <div className="w-full p-6 bg-white rounded-3xl dark:bg-gray-900">
           <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Editar Categoría</h2>
+          <Label>Nombre</Label>
           <Input
             value={categoriaEditNombre}
             onChange={(e) => setCategoriaEditNombre(e.target.value)}

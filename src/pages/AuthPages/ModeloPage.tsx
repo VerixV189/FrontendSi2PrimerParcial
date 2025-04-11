@@ -41,7 +41,13 @@ export const ModeloPage = () => {
           categoria_id: Number(categoriaId),
         };
         const res = await createModelo(payload);
-        Swal.fire("Éxito", res.message, "success");
+        Swal.fire({
+                title: "Modelo creado con exito",
+                text: res.message,
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              });
 
         setShowCreateModal(false);
         setNombreModelo("");

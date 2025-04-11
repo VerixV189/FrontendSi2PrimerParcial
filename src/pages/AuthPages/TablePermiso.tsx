@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import { Modal } from "../../components/ui/modal";
 import Button from "../../components/ui/button/Button";
 import Input from "../../components/form/input/InputField";
+import Label from "../../components/form/Label";
 interface TablePermisoProps {
   reloadTrigger?: boolean;
   onDeleted?: () => void;
@@ -37,14 +38,14 @@ const TablePermiso = ({reloadTrigger,onDeleted}:TablePermisoProps) => {
 
 
 
-
+    
   const handleEdit = async () => {
     if (!permisoToEdit) return;
 
     try {
       const data = await updatePermiso(permisoToEdit.id, permisoEditNombre);
       Swal.fire({
-        title: "Rol actualizado",
+        title: "Permiso actualizado",
         text: data.message,
         icon: "success",
         timer: 2000,
@@ -195,8 +196,9 @@ const TablePermiso = ({reloadTrigger,onDeleted}:TablePermisoProps) => {
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} className="max-w-[400px] m-4">
         <div className="w-full p-6 bg-white rounded-3xl dark:bg-gray-900">
           <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
-            Editar Rol
+            Editar Permiso
           </h2>
+          <Label>Nombre</Label>
           <Input
             type="text"
             className="w-full p-2 border rounded"

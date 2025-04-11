@@ -2,6 +2,7 @@ import { Link } from "react-router";
 
 interface BreadcrumbProps {
   pageTitle: string;
+  
 }
 
 const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {

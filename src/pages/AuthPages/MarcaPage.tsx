@@ -24,7 +24,7 @@ export const MarcaPage = () => {
 
       Swal.fire({
         icon: 'success',
-        title: 'Marca creada',
+        title: 'Marca creada con exito',
         text: data.message,
         timer: 2000,
         showConfirmButton: false,

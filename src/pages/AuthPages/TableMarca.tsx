@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import { Modal } from "../../components/ui/modal";
 import Button from "../../components/ui/button/Button";
 import Input from "../../components/form/input/InputField";
+import Label from "../../components/form/Label";
 
 interface TableMarcaProps {
   reloadTrigger?: boolean;
@@ -60,7 +61,13 @@ const TableMarca = ({ reloadTrigger, onDeleted }: TableMarcaProps) => {
 
     try {
       const data = await updateMarca(selectedMarca.id, marcaEditNombre);
-      Swal.fire("Marca actualizada", data.message, "success");
+      Swal.fire({
+              title: "Marca actualizada",
+              text: data.message,
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
       setShowEditModal(false);
       fetchMarcas();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -137,6 +144,7 @@ const TableMarca = ({ reloadTrigger, onDeleted }: TableMarcaProps) => {
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} className="max-w-[400px] m-4">
         <div className="w-full p-6 bg-white rounded-3xl dark:bg-gray-900">
           <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Editar Marca</h2>
+          <Label>Nombre</Label>
           <Input
             value={marcaEditNombre}
             onChange={(e) => setMarcaEditNombre(e.target.value)}

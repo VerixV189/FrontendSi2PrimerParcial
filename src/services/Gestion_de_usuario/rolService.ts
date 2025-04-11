@@ -83,3 +83,53 @@ export const updateRol = async (id: number, nombre: string): Promise<ResponseDef
     rol:data.rol
   };
 };
+
+
+export const getRol = async (id: number): Promise<ResponseDefault> => {
+  const response = await fetch(`${API_URL}/rol/${id}/get`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getStoredToken()}`
+    },
+  });
+
+  const data = await handleErrorResponse(response);
+  return {
+    message: data.message,
+    rol:data.rol
+  };
+};
+
+
+//asignar roles
+
+export const asignarPermisosToRol = async (idRol:number,idPermiso:number):Promise<ResponseDefault> => {
+   const response = await fetch(`${API_URL}/rol/${idRol}/permiso/${idPermiso}/asignar`, {
+     method: "POST",
+     headers: {
+       "Content-Type": "application/json",
+       Authorization: `Bearer ${getStoredToken()}`,
+     },
+   });
+
+   const data = await handleErrorResponse(response);
+   return {
+     message: data.message,
+   };
+}
+
+export const eliminarPermisosToRol = async (idRol:number,idPermiso:number):Promise<ResponseDefault> => {
+   const response = await fetch(`${API_URL}/rol/${idRol}/permiso/${idPermiso}/eliminar`, {
+     method: "DELETE",
+     headers: {
+       "Content-Type": "application/json",
+       Authorization: `Bearer ${getStoredToken()}`,
+     },
+   });
+
+   const data = await handleErrorResponse(response);
+   return {
+     message: data.message,
+   };
+}

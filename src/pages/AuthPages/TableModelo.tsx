@@ -85,7 +85,13 @@ const openEditModal = async (modelo: Modelo) => {
     if (!selectedModelo) return;
     try {
       const data = await deleteModelo(selectedModelo.id);
-      Swal.fire("Modelo eliminado", data.message, "success");
+      Swal.fire({
+              title: "Modelo actualizado",
+              text: data.message,
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+        });
       setShowDeleteModal(false);
       setSelectedModelo(null);
 

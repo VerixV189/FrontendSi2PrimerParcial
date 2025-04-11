@@ -14,6 +14,8 @@ import { Modal } from "../../components/ui/modal";
 import Swal from "sweetalert2";
 import Button from "../../components/ui/button/Button";
 import Input from "../../components/form/input/InputField";
+import Label from "../../components/form/Label";
+import { useNavigate } from "react-router";
 
 
 
@@ -28,6 +30,7 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const navigate = useNavigate()
   // para el edit
   const [showEditModal, setShowEditModal] = useState(false);
   const [rolEditNombre, setRolEditNombre] = useState("");
@@ -48,6 +51,12 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
     setShowDeleteModal(true);
   };
 
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleAsignarPermisos = (rolId:number) => {
+    console.log(`asignacion ${rolId}`)
+    navigate(`/roles-permisos/rol/${rolId}`)
+  }
   //handle para el edit del modal
   const handleEdit = async () => {
   if (!rolToEdit) return;
@@ -162,7 +171,8 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
                      >
                       <PencilSquareIcon className="h-5 w-5" />
                     </button>
-                    <button className="text-gray-500 hover:text-green-600 dark:hover:text-green-400">
+                    <button className="text-gray-500 hover:text-green-600 dark:hover:text-green-400"
+                    onClick={() => handleAsignarPermisos(role.id)}>
                       <UserPlusIcon className="h-5 w-5" />
                     </button>
                     <button className="text-gray-500 hover:text-red-600 dark:hover:text-red-400"
@@ -203,6 +213,7 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
           <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
             Editar Rol
           </h2>
+          <Label>Nombre</Label>
           <Input
             type="text"
             className="w-full p-2 border rounded"

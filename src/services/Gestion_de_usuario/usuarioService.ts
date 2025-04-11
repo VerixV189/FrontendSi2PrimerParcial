@@ -2,7 +2,7 @@
 
 
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
-import { AuthResponse, ResponseDefault, UsuarioPaginado } from "../interfaces/usuarios";
+import { AuthResponse, ResponseDefault, UsuarioCreateRequest, UsuarioPaginado, UsuarioUpdateRequest } from "../interfaces/usuarios";
 
 
 export const updateUserProfile = async (data: {
@@ -79,3 +79,51 @@ export const getPaginatedListUsers = async (page:number = 1):Promise<UsuarioPagi
   });
   return await handleErrorResponse(response);
 };
+
+
+//para admin
+
+
+export const adminGetUserMethod = async (usuario:UsuarioCreateRequest): Promise<ResponseDefault> => {
+ const response = await fetch(`${API_URL}/usuarios/${usuario.id}/get`, {
+   method: "GET",
+   headers: {
+     Authorization: `Bearer ${getStoredToken()}`,
+     "Content-Type": "application/json"
+   },
+ }); 
+  const data =  await handleErrorResponse(response)
+  return {
+    message:data.message,
+    usuario:data.usuario
+  }
+} 
+
+export const adminDeleteUserMethod = async (id:number): Promise<ResponseDefault> => {
+  const response = await fetch(`${API_URL}/usuarios/${id}/delete`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${getStoredToken()}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await handleErrorResponse(response)
+  return {
+    message:data.message
+  }
+}
+
+export const adminEditUserMethod = async (usuario:UsuarioUpdateRequest):Promise<ResponseDefault> => {
+  const response = await fetch(`${API_URL}/usuarios/${usuario.id}/update`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${getStoredToken()}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await handleErrorResponse(response);
+  return {
+    message: data.message,
+    usuario: data.usuario
+  };
+}

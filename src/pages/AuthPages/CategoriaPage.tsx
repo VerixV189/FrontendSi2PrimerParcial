@@ -24,7 +24,7 @@ export const CategoriaPage = () => {
 
       Swal.fire({
         icon: 'success',
-        title: 'Categoría creada',
+        title: 'Categoría creada con exito',
         text: data.message,
         timer: 2000,
         showConfirmButton: false,

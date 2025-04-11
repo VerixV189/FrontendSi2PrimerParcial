@@ -23,6 +23,7 @@ export interface Usuario extends DatoGeneral{
     rol?: Rol,
 }
 
+
 export interface Error {
   message: string;
   error: number;
@@ -44,10 +45,30 @@ export interface ResponseDefault{
   categoria?:Categoria,
   marcas?:Marca[],
   categorias?:Categoria[],
-  modelo?:Modelo
+  modelo?:Modelo,
+  usuario?:Usuario
 }
 
 export interface UsuarioPaginado{
   items:Usuario[],
   meta:Meta
 }
+
+
+
+
+
+// para la creacion de ususarios
+export interface UsuarioCreateRequest {
+  id?: number,
+  email: string;
+  rol_id: number;
+  nombre: string;
+  password: string;
+}
+
+export interface UsuarioUpdateRequest extends UsuarioCreateRequest {
+  nombre: string;
+}
+
+

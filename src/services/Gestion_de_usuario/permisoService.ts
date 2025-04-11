@@ -1,6 +1,6 @@
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
 import { PermisoPaginado } from "../interfaces/permiso";
-import { ResponseDefault } from "../interfaces/usuarios";
+import { Permiso, ResponseDefault } from "../interfaces/usuarios";
 
 export const getPaginatedPermisos = async (page:number =1):Promise<PermisoPaginado> => {
   const response = await fetch(
@@ -63,4 +63,17 @@ export const updatePermiso = async (id: number, nombre: string): Promise<Respons
     message: data.message,
     permiso:data.permiso
   };
+};
+
+export const getListPermisos = async (): Promise<Permiso[]> => {
+  const response = await fetch(`${API_URL}/permisos/list`, {
+    method:"GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getStoredToken()}`,
+    },
+  });
+ console.log(response)
+  const data = await handleErrorResponse(response);
+  return data 
 };
