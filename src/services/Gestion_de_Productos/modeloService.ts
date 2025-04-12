@@ -1,5 +1,5 @@
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
-import {ModeloPaginado, ModeloRequest} from "../interfaces/modelo"
+import {ModeloPaginado, ModeloProducto, ModeloRequest} from "../interfaces/modelo"
 import { ResponseDefault } from "../interfaces/usuarios";
 
 
@@ -61,5 +61,15 @@ export const createModelo = async (modelo: ModeloRequest): Promise<ResponseDefau
    };
 };
 
-
+export const listModelos = async ():Promise<ModeloProducto[]> => {
+  const response = await fetch(`${API_URL}/modelos/list`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getStoredToken()}`,
+    },
+  });
+  const data = await handleErrorResponse(response)
+  return data
+}
 

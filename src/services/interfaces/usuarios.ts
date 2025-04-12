@@ -2,6 +2,7 @@ import { Meta } from "./Bitacora";
 import { Categoria } from "./categoria";
 import { Marca } from "./marca";
 import { Modelo } from "./modelo";
+import {  ProductoResponseUpdateBackend } from "./producto";
 
 export interface DatoGeneral{
     id: number,
@@ -46,7 +47,8 @@ export interface ResponseDefault{
   marcas?:Marca[],
   categorias?:Categoria[],
   modelo?:Modelo,
-  usuario?:Usuario
+  usuario?:Usuario,
+  producto?:ProductoResponseUpdateBackend
 }
 
 export interface UsuarioPaginado{

@@ -26,7 +26,13 @@ import { MarcaPage } from "./pages/AuthPages/MarcaPage";
 import { CategoriaPage } from "./pages/AuthPages/CategoriaPage";
 import { ModeloPage } from "./pages/AuthPages/ModeloPage";
 import { UsuarioPage } from "./pages/AuthPages/UsuariosPage";
+
 import { PermisoAsignacionPage } from "./pages/AuthPages/PermisoAsignacionPage";
+import UserAdminProfiles from "./pages/AuthPages/UsuarioEditPage";
+import RegistrarUsuario from "./pages/AuthPages/RegistroPage";
+import { ProductoAdminPage } from "./pages/AuthPages/ProductoAdminPage";
+import { ProductosMainPage } from "./pages/AuthPages/ProductoMainPage";
+import EditarProductoPage from "./pages/AuthPages/ProductoEditPage";
 // import { AuthProvider } from "./context/AuthContext.tsx";
 
 
@@ -48,13 +54,20 @@ export default function App() {
 
                     {/* Others Page */}
                     <Route path="/profile" element={<UserProfiles />} />
+
+                    
+                    <Route path="/profile/usuario/:id" element={<UserAdminProfiles />} />
                     <Route path="/bitacora-usuario" element={<BitacoraUsuario />} />
                     <Route path="/roles-permisos" element={<RolPermisoPage />} />
                     <Route path="/roles-permisos/rol/:id" element={<PermisoAsignacionPage/>}/>
+                    <Route path="/registrar-usuario" element={<RegistrarUsuario />} />
                     <Route path="/marcas" element={<MarcaPage />} />
                     <Route path="/categorias" element={<CategoriaPage />} />
                     <Route path="/modelos" element={<ModeloPage />} />
                     <Route path="/usuarios" element={<UsuarioPage />} />
+                    <Route path="/productos" element={<ProductosMainPage/>}></Route>
+                    <Route path="/productos/:id/edit" element={<EditarProductoPage/>}></Route>
+                    <Route path="/crear-producto" element={<ProductoAdminPage/>}></Route>
 
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/blank" element={<Blank />} />

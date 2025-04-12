@@ -2,7 +2,7 @@
 
 
 import { API_URL, getStoredToken, handleErrorResponse } from "../authService";
-import { AuthResponse, ResponseDefault, UsuarioCreateRequest, UsuarioPaginado, UsuarioUpdateRequest } from "../interfaces/usuarios";
+import { AuthResponse, ResponseDefault, UsuarioPaginado, UsuarioUpdateRequest } from "../interfaces/usuarios";
 
 
 export const updateUserProfile = async (data: {
@@ -84,8 +84,8 @@ export const getPaginatedListUsers = async (page:number = 1):Promise<UsuarioPagi
 //para admin
 
 
-export const adminGetUserMethod = async (usuario:UsuarioCreateRequest): Promise<ResponseDefault> => {
- const response = await fetch(`${API_URL}/usuarios/${usuario.id}/get`, {
+export const adminGetUserMethod = async (id:number): Promise<ResponseDefault> => {
+ const response = await fetch(`${API_URL}/usuarios/${id}/get`, {
    method: "GET",
    headers: {
      Authorization: `Bearer ${getStoredToken()}`,
@@ -113,17 +113,19 @@ export const adminDeleteUserMethod = async (id:number): Promise<ResponseDefault>
   }
 }
 
-export const adminEditUserMethod = async (usuario:UsuarioUpdateRequest):Promise<ResponseDefault> => {
-  const response = await fetch(`${API_URL}/usuarios/${usuario.id}/update`, {
+export const adminEditUserMethod = async (id:number,usuario:UsuarioUpdateRequest):Promise<AuthResponse> => {
+  console.log(usuario)
+  const response = await fetch(`${API_URL}/usuarios/${id}/update`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${getStoredToken()}`,
       "Content-Type": "application/json",
     },
+    body:JSON.stringify(usuario)
   });
   const data = await handleErrorResponse(response);
   return {
     message: data.message,
-    usuario: data.usuario
+    user: data.usuario
   };
 }

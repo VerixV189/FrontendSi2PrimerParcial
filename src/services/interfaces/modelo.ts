@@ -23,3 +23,11 @@ export interface ModeloRequest {
   stock_total?: number;
   id?:number//referencia al id del Modelo
 }
+
+export interface ModeloProducto {
+  id: number;
+  nombre: string;
+  descripcion:string;
+  marca: { nombre: string };
+  categoria: { nombre: string };
+}

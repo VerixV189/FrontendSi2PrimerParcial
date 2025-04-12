@@ -104,7 +104,7 @@ const TableRol = ({ reloadTrigger, onDeleted }: TableRolProps) => {
       setSelectedRol(null);
       const updatedData = await getPaginatedRoles(currentPage);
 
-      // 🧠 Si la página actual se quedó sin elementos y no estás en la primera página, retrocede
+      //  Si la página actual se quedó sin elementos y no estás en la primera página, retrocede
       if (updatedData.items.length === 0 && currentPage > 1) {
         setCurrentPage((prev) => prev - 1);
       } else {
