@@ -26,12 +26,24 @@ export const ModeloPage = () => {
     const [categorias, setCategorias] = useState<Categoria[]>([]);
     const [reloadModelos, setReloadModelos] = useState(false);
 
+
     useEffect(() => {
-      if (showCreateModal) {
-        getAllMarca().then(setMarcas);
-        getAllCategoria().then(setCategorias);
-      }
-    }, [showCreateModal]);
+      const fetchDatos = async () => {
+        try {
+          const [marcasRes, categoriasRes] = await Promise.all([
+            getAllMarca(),
+            getAllCategoria()
+          ]);
+          setMarcas(marcasRes);
+          setCategorias(categoriasRes);
+        } catch (error) {
+          console.error("Error al obtener marcas o categorías", error);
+        }
+      };
+
+      fetchDatos();
+    }, []);
+
 
     const handleCrearModelo = async () => {
       try {

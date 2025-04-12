@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect, ReactNode } from "react";
-import { checkAuth } from "../services/authService";
+import { checkAuth, getStoredToken, logout, revokeToken} from "../services/authService";
 import { Usuario } from "../services/interfaces/usuarios";
+
+
 
 // Definir la estructura del usuario (ajústala según tu backend)
 
@@ -9,6 +11,7 @@ interface AuthContextType {
   user: Usuario | null;
   loading: boolean;
   setUser: React.Dispatch<React.SetStateAction<Usuario | null>>,
+  logoutSession: () => void; // <-- Agrega esto
 }
 
 // Crear el contexto con valores iniciales
@@ -22,9 +25,15 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<Usuario | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  
   useEffect(() => {
     const fetchUser = async () => {
+       const token = getStoredToken(); // o sessionStorage
+        if (!token) {
+          console.log('NO existe token asociado')
+          setLoading(false);
+          return;
+        }
       try {
         const userData = await checkAuth(); // Petición a `/me`
         console.log(`useEffect del AuthProvider ${userData.user}`);
@@ -39,8 +48,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     fetchUser();
   }, []);
 
+  const logoutSession = async () => {
+    await logout()
+    revokeToken()
+    setUser(null);
+  };
   return (
-    <AuthContext.Provider value={{ user, setUser, loading }}>
+    <AuthContext.Provider value={{ user, setUser, loading, logoutSession }}>
       {children}
     </AuthContext.Provider>
   );

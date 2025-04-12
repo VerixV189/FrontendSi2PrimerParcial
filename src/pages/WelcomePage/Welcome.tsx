@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import backgroundImage from '../../../public/images/welcome/fondo-red-social.jpg'
+import backgroundImage from "../../assets/images/fondo-red-social.jpg"
 
 export default function Welcome() {
   return (

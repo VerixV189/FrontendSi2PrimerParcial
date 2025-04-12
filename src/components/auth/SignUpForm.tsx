@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import { signup } from "../../services/authService";
+import Swal from "sweetalert2";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,16 +15,56 @@ export default function SignUpForm() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate()
+  const [errors, setErrors] = useState({
+    nombre: "",
+    email: "",
+    password: "",
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+     const { name, value } = e.target;
+    setForm({ ...form, [e.target.name]: value });
+
+        // Limpia el error del campo que se está editando
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault()
+     const newErrors = { nombre: "", email: "", password: "" };
+    let hasError = false;
+
+    if (!form.nombre.trim()) {
+      newErrors.nombre = "El nombre es obligatorio";
+      hasError = true;
+    }
+
+    if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      newErrors.email = "Email no válido";
+      hasError = true;
+    }
+
+    if (form.password.length < 4) {
+      newErrors.password = "La contraseña debe tener al menos 4 caracteres";
+      hasError = true;
+    }
+
+    setErrors(newErrors);
+    if (hasError) return;
     try {
       const {nombre,email,password} =form
       const data = await signup(nombre,email,password)
       console.log(`data creada: ${data}`)
+      navigate('/signin')
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Exito',
+              text: 'Cuenta creada con exito',
+              timer: 2000,
+              showConfirmButton: false,
+            });
     } catch (error) {
       console.log(`ocurrio un error inesperado: `,error)
     }
@@ -117,7 +158,11 @@ export default function SignUpForm() {
                       placeholder="Ingresa tu nombre"
                       value={form.nombre}
                       onChange={handleChange}
+                       className={errors.nombre ? "border-error-500" : ""}
                     />
+                    {errors.nombre && (
+                      <p className="mt-1 text-sm text-error-500">{errors.nombre}</p>
+                    )}
                 <div>
                   <Label>
                     Email<span className="text-error-500">*</span>
@@ -129,7 +174,11 @@ export default function SignUpForm() {
                     placeholder="Ingresa tu email"
                     value={form.email}
                     onChange={handleChange}
+                    className={errors.email ? "border-error-500" : ""}
                   />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-error-500">{errors.email}</p>
+                  )}
                 </div>
                 {/* <!-- Password --> */}
                 <div>
@@ -143,7 +192,11 @@ export default function SignUpForm() {
                       value={form.password}
                       onChange={handleChange}
                       name="password"
+                        className={errors.password ? "border-error-500" : ""}
                     />
+                    {errors.password && (
+                      <p className="mt-1 text-sm text-error-500">{errors.password}</p>
+                    )}
                     <span
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"

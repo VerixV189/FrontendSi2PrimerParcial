@@ -31,8 +31,7 @@ export const PermisoAsignacionPage = () => {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [reloadTrigger, setReloadTrigger] = useState(false);
 
-  //para controlar que solamente se llame cuando se necesite
-  const [yaCargoPermisos, setYaCargoPermisos] = useState(false);
+  
 
 
    const ejecutarSwalBien = (title:string,text:string):void => {
@@ -72,6 +71,7 @@ export const PermisoAsignacionPage = () => {
   
   }, [id, reloadTrigger]);
 
+   useEffect(() => {
     const fetchPermisos = async () => {
       try {
         const data = await getListPermisos();
@@ -81,15 +81,9 @@ export const PermisoAsignacionPage = () => {
       }
     };
 
-    useEffect(() => {
-        const cargarPermisos = async () => {
-            if (showAssignModal && !yaCargoPermisos) {
-            await fetchPermisos();
-            setYaCargoPermisos(true);
-            }
-        };
-        cargarPermisos()
-    },[showAssignModal,yaCargoPermisos])
+    fetchPermisos(); // Se llama una sola vez al montar el componente
+  }, []);
+ 
 
   const handleAsignarPermiso = async () => {
     if (!permisoSeleccionado || !id) return;

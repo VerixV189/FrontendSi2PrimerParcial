@@ -19,6 +19,15 @@ export default function SignInForm() {
   
   const [isChecked, setIsChecked] = useState(false);
 
+
+  //para los errores
+
+  const [errorMessage, setErrorMessage] = useState("");
+    const [inputError, setInputError] = useState({
+      email: false,
+      password: false,
+    });
+
   //estados para el email y contrasenia
   const [ email, setEmail ] = useState<string>("");
   const [ password, setPassword ] = useState<string>("");  
@@ -33,14 +42,22 @@ export default function SignInForm() {
       event.preventDefault();
       try {
         //aca lo guardo en el storage
+
+        if (!email || !password) {
+          setInputError({ email: !email, password: !password });
+          setErrorMessage("Por favor completa todos los campos.");
+          return;
+        }
+
         const data = await login(email,password);
         setUser(data.user);
         console.log(`estoy en el try del componente Signin o login ${data.user.rol?.nombre}`);
         navigate("/home");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        console.error(`me dispare en el handleSubmit ${error}`);
-        navigate("/error");
+        console.error("Error en login:", error.message);
+        setErrorMessage("Email o contraseña incorrecta"); // mensaje para el usuario
+        setInputError({ email: true, password: true }); // resalta los campos
       }
     }
     
@@ -124,6 +141,10 @@ export default function SignInForm() {
                 </span>
               </div>
             </div>
+            {errorMessage && (
+              <p className="mt-2 text-sm text-error-500 text-center">{errorMessage}</p>
+            )}
+
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>
@@ -132,7 +153,14 @@ export default function SignInForm() {
                   </Label>
                   <Input placeholder="tuCuenta@gmail.com"
                   value={email} 
-                  onChange={(e) => setEmail(e.target.value)}/>
+                  onChange={(e) => {
+                              setEmail(e.target.value);
+                              setInputError((prev) => ({ ...prev, email: false }));
+                              setErrorMessage(""); // limpiamos el mensaje
+                            }}
+
+                  className={inputError.email ? "border-error-500" : ""}
+                   />
                 </div>
                 <div>
                   <Label>
@@ -143,7 +171,13 @@ export default function SignInForm() {
                       type={showPassword ? "text" : "password"}
                       placeholder="Ingresa tu contraseña"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setInputError((prev) => ({ ...prev, password: false }));
+                        setErrorMessage("");
+                      }}
+
+                      className={inputError.password ? "border-error-500" : ""}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}

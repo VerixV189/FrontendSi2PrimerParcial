@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -33,6 +33,8 @@ import RegistrarUsuario from "./pages/AuthPages/RegistroPage";
 import { ProductoAdminPage } from "./pages/AuthPages/ProductoAdminPage";
 import { ProductosMainPage } from "./pages/AuthPages/ProductoMainPage";
 import EditarProductoPage from "./pages/AuthPages/ProductoEditPage";
+import { ProtectedRoute } from "./pages/AuthPages/logic-routes/ProtectedRoute";
+import Unauthorized from "./pages/OtherPage/Unauthorized";
 // import { AuthProvider } from "./context/AuthContext.tsx";
 
 
@@ -50,24 +52,48 @@ export default function App() {
             {/* <AuthProvider> */}
               <Route element={<AppLayout />}>
               
-                    <Route index path="/home" element={<Home />} />
 
-                    {/* Others Page */}
-                    <Route path="/profile" element={<UserProfiles />} />
+              {/* <Route path="/usuarios" element={
+                      <ProtectedRoute rolesAllowed={["ADMINISTRADOR"]}>
+                        <UsuarioPage />
+                      </ProtectedRoute>
+                    } /> otra manera de hacerlo*/}
+                    <Route
+                      element={
+                        <ProtectedRoute rolesAllowed={["ADMINISTRADOR","USUARIO"]}>
+                          <Outlet />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index path="/home" element={<Home />} />
+                      <Route path="/profile" element={<UserProfiles />} />
 
+                    </Route>
                     
-                    <Route path="/profile/usuario/:id" element={<UserAdminProfiles />} />
-                    <Route path="/bitacora-usuario" element={<BitacoraUsuario />} />
-                    <Route path="/roles-permisos" element={<RolPermisoPage />} />
-                    <Route path="/roles-permisos/rol/:id" element={<PermisoAsignacionPage/>}/>
-                    <Route path="/registrar-usuario" element={<RegistrarUsuario />} />
-                    <Route path="/marcas" element={<MarcaPage />} />
-                    <Route path="/categorias" element={<CategoriaPage />} />
-                    <Route path="/modelos" element={<ModeloPage />} />
-                    <Route path="/usuarios" element={<UsuarioPage />} />
-                    <Route path="/productos" element={<ProductosMainPage/>}></Route>
-                    <Route path="/productos/:id/edit" element={<EditarProductoPage/>}></Route>
-                    <Route path="/crear-producto" element={<ProductoAdminPage/>}></Route>
+
+                    <Route
+                      element={
+                        <ProtectedRoute rolesAllowed={["ADMINISTRADOR"]}>
+                          <Outlet />
+                        </ProtectedRoute>
+                      }
+                    >
+                      {/* <Route index path="/home" element={<Home />} /> */}
+                      <Route path="/profile/usuario/:id" element={<UserAdminProfiles />} />
+                      <Route path="/bitacora-usuario" element={<BitacoraUsuario />} />
+                      <Route path="/roles-permisos" element={<RolPermisoPage />} />
+                      <Route path="/roles-permisos/rol/:id" element={<PermisoAsignacionPage />} />
+                      <Route path="/registrar-usuario" element={<RegistrarUsuario />} />
+                      <Route path="/marcas" element={<MarcaPage />} />
+                      <Route path="/categorias" element={<CategoriaPage />} />
+                      <Route path="/modelos" element={<ModeloPage />} />
+                      <Route path="/usuarios" element={<UsuarioPage />} />
+                      <Route path="/productos" element={<ProductosMainPage />} />
+                      <Route path="/productos/:id/edit" element={<EditarProductoPage />} />
+                      <Route path="/crear-producto" element={<ProductoAdminPage />} />
+                    </Route>
+
+                                        
 
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/blank" element={<Blank />} />
@@ -99,6 +125,7 @@ export default function App() {
             {/* Fallback Route */}
             {/* ruta de errores, se dispara cuando accedemos a una ruta no definida */}
             <Route path="*" element={<NotFound />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
           </Routes>
         </Router>
         

@@ -103,3 +103,24 @@ export const checkAuth = async (): Promise<AuthResponse> => {
   }
 };
 
+
+
+export const logout = async (): Promise<AuthResponse> => {
+  
+    const response = await fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getStoredToken()}`,
+       },
+      //credentials: "include" //permite enviar y recibir cookies
+    });
+    
+    const data = await handleErrorResponse(response);
+    return {
+      message: data.message
+    } as AuthResponse;
+
+  
+};
+
