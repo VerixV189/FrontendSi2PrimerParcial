@@ -11,6 +11,7 @@ import UserAdminMetaCard from "./Usuario/UsuarioMetaCard";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import UserAdminInfoCard from "./Usuario/InformacionUsuarioCard";
+import UserAdminPasswordCard from "./Usuario/CambioPasswordCard";
 
 
 
@@ -18,8 +19,12 @@ export default function UserAdminProfiles() {
   const { id } = useParams();
   const [user, setUser] = useState<Usuario | null>(null);
 
+  //para el estado de la imagen
+  const [imgVersion, setImgVersion] = useState<number>(0);
+
    useEffect(() => {
     const fetchUsuario = async () => {
+      console.log('estoy haciendo peticion para actualizar el usuario')
       try {
         if (id) {
           const data = await adminGetUserMethod(Number(id));
@@ -31,7 +36,7 @@ export default function UserAdminProfiles() {
     };
 
     fetchUsuario();
-  }, [id]);
+  }, [id,imgVersion]);
 
   return (
     <>
@@ -45,8 +50,9 @@ export default function UserAdminProfiles() {
           Perfil
         </h3>
         <div className="space-y-6">
-          <UserAdminMetaCard user={user} />
-          <UserAdminInfoCard user={user} setUser={setUser} />
+          <UserAdminMetaCard user={user} imgVersion = {imgVersion}/>
+          <UserAdminInfoCard user={user} setUser={setUser}  />
+          <UserAdminPasswordCard user={user} setUser={setUser} setImgVersion = {setImgVersion}/>
         </div>
       </div>
     </>

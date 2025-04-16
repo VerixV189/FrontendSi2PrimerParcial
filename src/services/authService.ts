@@ -5,6 +5,11 @@ export const API_URL: string = "http://127.0.0.1:8000/api";
 
 export const TOKEN: string = "token";
 
+export const CLOUD_NAME: string = "ddmdsfcvf" 
+
+export const CLOUDINARY_URL:string = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload`
+
+
 
 export const storeToken = (token: string) => {
   localStorage.setItem(TOKEN, token);
@@ -123,4 +128,6 @@ export const logout = async (): Promise<AuthResponse> => {
 
   
 };
+
+
 

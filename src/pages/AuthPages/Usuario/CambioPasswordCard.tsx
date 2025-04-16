@@ -1,176 +1,190 @@
-// import { useEffect, useState } from "react";
-// import { Modal } from "../ui/modal";
-// import Button from "../ui/button/Button";
-// import Input from "../form/input/InputField";
-// import Label from "../form/Label";
-// import { EyeIcon, EyeCloseIcon } from "../../icons"; // Asegúrate de importar estos
-// import DropzoneComponent from "../form/form-elements/DropZone";
-// import { cambiarContrasenia } from "../../services/Gestion_de_usuario/usuarioService";
-// import Alert from "../ui/alert/Alert";
+import { useEffect, useState } from "react";
+import { Modal } from "../../../components/ui/modal";
+import Button from "../../../components/ui/button/Button";
+import Input from "../../../components/form/input/InputField";
+import Label from "../../../components/form/Label";
+import { EyeIcon, EyeCloseIcon } from "../../../icons";
+import DropzoneComponent from "../../../components/form/form-elements/DropZone";
+import Alert from "../../../components/ui/alert/Alert";
+import Swal from "sweetalert2";
+import { Usuario } from "../../../services/interfaces/usuarios";
+import {
+  adminCambiarContrasenia,
+  adminCambiarPerfil
+} from "../../../services/Gestion_de_usuario/usuarioService";
 
-// export default function AdminChangePasswordCard() {
-//   const [isOpen, setIsOpen] = useState(false); // Lo puedes reemplazar con useModal si lo deseas
-//   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
-//   const [alerta, setAlerta] = useState<{
-//     tipo: "success" | "error";
-//     titulo: string;
-//     message: string;
-//   } | null>(null);
+interface Props {
+  user: Usuario | null;
+  setUser: (user: Usuario) => void;
+  imgVersion?:number;
+  setImgVersion: (version: number) => void;
+}
 
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [form, setForm] = useState({
-//     actual: "",
-//     nueva: "",
-//   });
+export default function UserAdminSecurityCard({ user, setUser,setImgVersion }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [alerta, setAlerta] = useState<{
+    tipo: "success" | "error";
+    titulo: string;
+    message: string;
+  } | null>(null);
+  const [nueva, setNueva] = useState("");
 
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
+  const handleSubmit = async () => {
+    if (!user) return;
 
-//   const handleSubmit = async (e?: React.FormEvent) => {
-//     if (e) e.preventDefault(); // <--- evita que recargue la página
-//     try {
-//       const data = await cambiarContrasenia(form.actual, form.nueva);
-//       setAlerta({
-//         tipo: "success",
-//         titulo: "Contraseña actualizada",
-//         message: data.message ?? "Contrasenia actualizada",
-//       });
-//       setForm({ actual: "", nueva: "" }); // limpiar
-//       setIsOpen(false);
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     } catch (error: any) {
-//       setAlerta({
-//         tipo: "error",
-//         titulo: "Error al cambiar contraseña",
-//         message: error.message || "Ocurrió un error inesperado",
-//       });
-//     }
-//   };
+    if (nueva.length < 4) {
+        setNueva("");
+      setIsOpen(false);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "La contraseña debe tener al menos 4 caracteres",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      return;
+    }
 
+    try {
+      setIsOpen(false);
+      const response = await adminCambiarContrasenia(user.id, nueva);
+      Swal.fire({
+        icon: "success",
+        title: "Éxito",
+        text: response.message,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setNueva("");
+      return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+        setNueva("");
+      console.error("Error cambiando contraseña:", error);
+      setIsOpen(false);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "No se pudo cambiar la contraseña",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    }
+  };
 
-// // para ocultar las alertas
-//   useEffect(() => {
-//     if (alerta) {
-//       const timer = setTimeout(() => setAlerta(null), 5000);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [alerta]);
+  const handleUploadPhoto = async (file: File) => {
+    if (!user) return;
 
-//   return (
-//     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+    try {
+      const response = await adminCambiarPerfil(user.id, file);
 
-//         {alerta && (
-//         <div className="mb-4">
-//           <Alert
-//             variant={alerta.tipo}
-//             title={alerta.titulo}
-//             message={alerta.message}
-//             showLink={false}
-//           />
-//         </div>
-//       )}
-//       <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
-//         Edicion de Perfil y Contraseña
-//       </h4>
-
-//       <div className="flex gap-4">
-//         <Button size="sm" onClick={() => setIsOpen(true)} className="w-auto">
-//           Cambiar Contraseña
-//         </Button>
-
-//         <Button size="sm" onClick={() => setIsPhotoModalOpen(true)} className="w-auto">
-//           Cambiar Foto de Perfil
-//         </Button>
-//       </div>
+      
+    setUser(response.usuario!);
+    setImgVersion(Date.now());//modificar esto pa que actualize la imagen
 
 
+      Swal.fire({
+        icon: "success",
+        title: "Imagen actualizada",
+        text: response.message,
+        timer: 2000,
+        showConfirmButton: false,
+      });
 
-//       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} className="max-w-[600px] m-4">
-//         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
-//           <div className="px-2 pr-14">
-//             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-//               Cambiar tu contraseña
-//             </h4>
-//             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-//               Por favor, introduce tu contraseña actual y una nueva.
-//             </p>
-//           </div>
+      setIsPhotoModalOpen(false);
+      return;
+    } catch (error) {
+      console.error("Error al subir la imagen:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo subir la imagen. Intenta de nuevo.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    }
+  };
 
-//           <form
-//             className="flex flex-col"
-//           >
-//             <div className="px-2 overflow-y-auto custom-scrollbar">
-//               <div className="grid grid-cols-1 gap-y-5">
-//                 <div>
-//                   <Label>Contraseña Actual</Label>
-//                   <div className="relative">
-//                     <Input
-//                       type={showPassword ? "text" : "password"}
-//                       placeholder="Ingresa tu contraseña actual"
-//                       name="actual"
-//                       value={form.actual}
-//                       onChange={handleChange}
-//                     />
-//                     <button
-//                       type="button"
-//                       onClick={() => setShowPassword(!showPassword)}
-//                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-//                     >
-//                       {showPassword ? (
-//                         <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-//                       ) : (
-//                         <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-//                       )}
-//                     </button>
-//                   </div>
-//                 </div>
+  useEffect(() => {
+    if (alerta) {
+      const timer = setTimeout(() => setAlerta(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [alerta]);
 
-//                 <div>
-//                   <Label>Nueva Contraseña</Label>
-//                   <div className="relative">
-//                     <Input
-//                       type={showPassword ? "text" : "password"}
-//                       placeholder="Ingresa tu nueva contraseña"
-//                       name="nueva"
-//                       value={form.nueva}
-//                       onChange={handleChange}
-//                     />
-//                     <button
-//                       type="button"
-//                       onClick={() => setShowPassword(!showPassword)}
-//                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-//                     >
-//                       {showPassword ? (
-//                         <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-//                       ) : (
-//                         <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-//                       )}
-//                     </button>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
+  return (
+    <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
+      {alerta && (
+        <div className="mb-4">
+          <Alert
+            variant={alerta.tipo}
+            title={alerta.titulo}
+            message={alerta.message}
+            showLink={false}
+          />
+        </div>
+      )}
 
-//             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-//               <Button size="sm" variant="outline" onClick={() => setIsOpen(false)}>
-//                 Cancelar
-//               </Button>
-//               <Button size="sm" onClick={handleSubmit}>
-//                 Cambiar Contraseña
-//               </Button>
-//             </div>
-//           </form>
-//         </div>
-//       </Modal>
-//       <Modal isOpen={isPhotoModalOpen} onClose={() => setIsPhotoModalOpen(false)} className="max-w-[600px] m-4">
-//         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
-//           <h4 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-white/90">Subir Nueva Foto de Perfil</h4>
-//           <DropzoneComponent />
-//         </div>
-//       </Modal>
+      <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-6">
+        Seguridad del Usuario
+      </h4>
 
-//     </div>
-//   );
-// }
+      <div className="flex gap-4">
+        <Button size="sm" onClick={() => setIsOpen(true)}>
+          Cambiar Contraseña
+        </Button>
 
+        <Button size="sm" onClick={() => setIsPhotoModalOpen(true)}>
+          Cambiar Foto de Perfil
+        </Button>
+      </div>
+
+      {/* Modal de contraseña */}
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} className="max-w-[600px] m-4">
+        <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl">
+          <h4 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white/90">
+            Cambiar Contraseña
+          </h4>
+
+          <div className="relative mb-5">
+            <Label>Nueva Contraseña</Label>
+            <Input
+              type={showPassword ? "text" : "password"}
+              placeholder="Nueva contraseña"
+              value={nueva}
+              onChange={(e) => setNueva(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-[52%] transform -translate-y-1/2"
+            >
+              {showPassword ? <EyeIcon className="size-5" /> : <EyeCloseIcon className="size-5" />}
+            </button>
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button size="sm" variant="outline" onClick={() => setIsOpen(false)}>
+              Cancelar
+            </Button>
+            <Button size="sm" onClick={handleSubmit}>
+              Guardar
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal de imagen */}
+      <Modal isOpen={isPhotoModalOpen} onClose={() => setIsPhotoModalOpen(false)} className="max-w-[600px] m-4">
+        <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl">
+          <h4 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white/90">
+            Subir Nueva Foto de Perfil
+          </h4>
+          <DropzoneComponent onUpload={handleUploadPhoto} />
+        </div>
+      </Modal>
+    </div>
+  );
+}

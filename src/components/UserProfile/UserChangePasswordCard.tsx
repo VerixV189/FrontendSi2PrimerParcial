@@ -1,14 +1,22 @@
-import { useEffect, useState } from "react";
+import {  useContext, useEffect, useState } from "react";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { EyeIcon, EyeCloseIcon } from "../../icons"; // Asegúrate de importar estos
 import DropzoneComponent from "../form/form-elements/DropZone";
-import { cambiarContrasenia } from "../../services/Gestion_de_usuario/usuarioService";
+import { cambiarContrasenia, cambiarFotoDePerfil } from "../../services/Gestion_de_usuario/usuarioService";
 import Alert from "../ui/alert/Alert";
+import Swal from "sweetalert2";
+import { AuthContext } from "../../context/AuthContext";
+// import { AuthContext } from "../../context/AuthContext";
+
 
 export default function ChangePasswordCard() {
+   const context = useContext(AuthContext);
+  if (!context) throw new Error("AuthContext not found");
+
+  const { setUser } = context;
   const [isOpen, setIsOpen] = useState(false); // Lo puedes reemplazar con useModal si lo deseas
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [alerta, setAlerta] = useState<{
@@ -29,25 +37,80 @@ export default function ChangePasswordCard() {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault(); // <--- evita que recargue la página
+    if (form.actual.length < 4 || form.nueva.length < 1 ) {
+      setIsOpen(false);
+      Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'la contrasenia debe tener al menos 4 caracteres',
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+                  setForm({ actual: "", nueva: "" }); // limpiar
+      return
+    }
     try {
       const data = await cambiarContrasenia(form.actual, form.nueva);
-      setAlerta({
-        tipo: "success",
-        titulo: "Contraseña actualizada",
-        message: data.message ?? "Contrasenia actualizada",
-      });
       setForm({ actual: "", nueva: "" }); // limpiar
       setIsOpen(false);
+      
+      Swal.fire({
+                    icon: 'success',
+                    title: 'Exito',
+                    text: data.message,
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      setAlerta({
-        tipo: "error",
-        titulo: "Error al cambiar contraseña",
-        message: error.message || "Ocurrió un error inesperado",
-      });
+       console.error(error.message)
+       setIsOpen(false);
+       setForm({ actual: "", nueva: "" }); // limpiar
+      Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message,
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
     }
   };
 
+//para subir la foto 
+  const handleUploadPhoto = async (file: File) => {
+      try {
+        const response = await cambiarFotoDePerfil(file); // este endpoint ya lo tenés
+
+        // Actualizar el contexto del usuario con el nuevo public_id
+        
+        Swal.fire({
+          icon: "success",
+          title: "Imagen actualizada",
+          text: response.message,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        //para que no haya lios y renderizo los cambios solo en la url_profile
+        if (response.user?.url_profile) {
+          setUser(prev => ({
+            ...prev!,
+            url_profile: response.user.url_profile,
+          }));
+        }
+
+        setIsPhotoModalOpen(false);
+
+      } catch (error) {
+        console.error("Error al subir la imagen:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo subir la imagen. Intenta de nuevo.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    };
 
 // para ocultar las alertas
   useEffect(() => {
@@ -166,7 +229,7 @@ export default function ChangePasswordCard() {
       <Modal isOpen={isPhotoModalOpen} onClose={() => setIsPhotoModalOpen(false)} className="max-w-[600px] m-4">
         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
           <h4 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-white/90">Subir Nueva Foto de Perfil</h4>
-          <DropzoneComponent />
+          <DropzoneComponent onUpload={handleUploadPhoto} />
         </div>
       </Modal>
 

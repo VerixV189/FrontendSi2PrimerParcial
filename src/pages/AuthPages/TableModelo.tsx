@@ -154,6 +154,7 @@ const openEditModal = async (modelo: Modelo) => {
                 <TableCell isHeader className="px-5 py-3 text-theme-xs font-medium text-start text-gray-500 dark:text-gray-400">Nombre</TableCell>
                 <TableCell isHeader className="px-5 py-3 text-theme-xs font-medium text-start text-gray-500 dark:text-gray-400">Marca</TableCell>
                 <TableCell isHeader className="px-5 py-3 text-theme-xs font-medium text-start text-gray-500 dark:text-gray-400">Categoría</TableCell>
+                <TableCell isHeader className="px-5 py-3 text-theme-xs font-medium text-start text-gray-500 dark:text-gray-400">Stock</TableCell>
                 <TableCell isHeader className="px-5 py-3 text-theme-xs font-medium text-start text-gray-500 dark:text-gray-400">Fecha creación</TableCell>
                 <TableCell isHeader className="px-5 py-3 text-theme-xs font-medium text-start text-gray-500 dark:text-gray-400">Última actualización</TableCell>
                 <TableCell isHeader className="px-5 py-3 text-theme-xs font-medium text-start text-gray-500 dark:text-gray-400">Acciones</TableCell>
@@ -166,6 +167,7 @@ const openEditModal = async (modelo: Modelo) => {
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-800 dark:text-white">{modelo.nombre}</TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-700 dark:text-white/80">{modelo.marca?.nombre ?? "-"}</TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-700 dark:text-white/80">{modelo.categoria?.nombre ?? "-"}</TableCell>
+                  <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-700 dark:text-white/80">{modelo.stock_total ?? "N/A"}</TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">{modelo.fecha_creacion}</TableCell>
                   <TableCell className="px-4 py-3 text-start text-theme-sm text-gray-500 dark:text-gray-400">{modelo.fecha_actualizacion}</TableCell>
                   <TableCell className="px-4 py-3 text-start">

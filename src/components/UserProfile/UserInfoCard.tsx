@@ -9,6 +9,7 @@ import { updateUserProfile } from "../../services/Gestion_de_usuario/usuarioServ
 import SelectModified from "../../pages/AuthPages/SelectModified";
 import { Rol } from "../../services/interfaces/usuarios";
 import { getListRoles } from "../../services/Gestion_de_usuario/rolService";
+import Swal from "sweetalert2";
 
 
 export default function UserInfoCard() {
@@ -63,8 +64,24 @@ export default function UserInfoCard() {
       const updatedUser = await updateUserProfile(form);
       setUser(updatedUser.user);
       closeModal();
-    } catch (error) {
+
+            Swal.fire({
+              icon: 'success',
+              title: 'exito',
+              text: updatedUser.message,
+              timer: 2000,
+              showConfirmButton: false,
+            });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.error("Error updating user:", error);
+      Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error.message,
+              timer: 2000,
+              showConfirmButton: false,
+            });
     }
   };
 

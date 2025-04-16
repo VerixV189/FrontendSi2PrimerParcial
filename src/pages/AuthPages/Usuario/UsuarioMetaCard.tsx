@@ -1,11 +1,13 @@
+import { CLOUDINARY_URL } from "../../../services/authService";
 import { Usuario } from "../../../services/interfaces/usuarios";
-
+import default_profile2 from "../../../assets/images/default_profile_2.png"
 interface Props {
   user: Usuario | null;
   setUser?: (user: Usuario) => void;
+  imgVersion?: number
 }
 
-export default function UserAdminMetaCard({user}:Props) {
+export default function UserAdminMetaCard({user,imgVersion}:Props) {
   
   
 
@@ -17,7 +19,12 @@ export default function UserAdminMetaCard({user}:Props) {
           <div className="flex flex-col items-center w-full gap-6 xl:flex-row">
             <div className="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
               {/* aqui deberia cargarse la imagen del usuario */}
-              <img src="/images/user/owner.jpg" alt="user" />
+              <img src={
+    user?.url_profile
+      ? `${CLOUDINARY_URL}/${user.url_profile}?v=${imgVersion}`
+      : default_profile2
+  }
+  alt="Profile image"/>
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">

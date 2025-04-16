@@ -102,6 +102,8 @@ export default function UserAdminInfoCard({user,setUser}:Props) {
           return
         } catch (error) {
           console.error("Error updating user:", error);
+          closeModal();
+          ejecutarSwalMal("Error","Error en la validacion de datos",3000)
         }
     }
     

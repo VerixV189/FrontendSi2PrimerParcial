@@ -17,11 +17,12 @@ export interface Rol extends DatoGeneral{
     permisos ?: Permiso[];
  }
 
-export interface Usuario extends DatoGeneral{
-    email:string,
-    rol_id: number,
-    username?:string,
-    rol?: Rol,
+export interface Usuario extends DatoGeneral {
+  email: string;
+  rol_id: number;
+  username?: string;
+  url_profile: string;
+  rol?: Rol;
 }
 
 
