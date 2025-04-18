@@ -91,6 +91,8 @@ export default function App() {
                       <Route path="/productos" element={<ProductosMainPage />} />
                       <Route path="/productos/:id/edit" element={<EditarProductoPage />} />
                       <Route path="/crear-producto" element={<ProductoAdminPage />} />
+                      <Route path="/producto/:id/get" element={<ProductoAdminPage />} />
+                      
                     </Route>
 
                                         
