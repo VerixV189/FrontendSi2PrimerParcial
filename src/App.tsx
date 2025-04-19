@@ -60,7 +60,7 @@ export default function App() {
                     } /> otra manera de hacerlo*/}
                     <Route
                       element={
-                        <ProtectedRoute rolesAllowed={["ADMINISTRADOR","USUARIO"]}>
+                        <ProtectedRoute rolesAllowed={["ADMINISTRADOR","CLIENTE"]}>
                           <Outlet />
                         </ProtectedRoute>
                       }
