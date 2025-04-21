@@ -1,7 +1,7 @@
 
 import { AuthResponse, Error } from "./interfaces/usuarios";
 
-export const API_URL: string = "http://127.0.0.1:8000/api";
+export const API_URL: string = "https://sw-web-mobile-python.onrender.com/api";
 
 export const TOKEN: string = "token";
 
